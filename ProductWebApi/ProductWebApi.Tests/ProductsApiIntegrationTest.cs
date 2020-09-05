@@ -12,10 +12,10 @@ using ProductWebApi.Models;
 namespace ProductWebApi.Tests
 {
     [TestClass]
-   public class ProductsApiTest
+   public class ProductsApiIntegrationTest
     {
         private HttpClient _client;
-        public ProductsApiTest()
+        public ProductsApiIntegrationTest()
         {
             var server = new TestServer(new WebHostBuilder()
                     .UseEnvironment("Development")
