@@ -55,7 +55,7 @@ namespace ProductWebApi.Controllers
 
             try
             {
-                await _service.UpdateProductAsync(id, product);
+                await _service.UpdateProductAsync(product);
             }
             catch (DataNotFoundException)
             {

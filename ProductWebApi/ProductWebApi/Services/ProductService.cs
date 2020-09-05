@@ -26,7 +26,7 @@ namespace ProductWebApi.Services
             return await _context.Products.FindAsync(id);
         }
 
-        public async Task UpdateProductAsync(string id, Product product)
+        public async Task UpdateProductAsync(Product product)
         {
             _context.Entry(product).State = EntityState.Modified;
 
@@ -36,7 +36,7 @@ namespace ProductWebApi.Services
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProductExists(id))
+                if (!ProductExists(product.Id))
                 {
                     throw new DataNotFoundException();
                 }

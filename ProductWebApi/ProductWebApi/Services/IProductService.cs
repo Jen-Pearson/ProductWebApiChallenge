@@ -10,6 +10,6 @@ namespace ProductWebApi.Services
         Task<Product> DeleteProductAsync(string id);
         Task<Product> GetProductAsync(string id);
         Task<IEnumerable<Product>> GetProductsAsync();
-        Task UpdateProductAsync(string id, Product product);
+        Task UpdateProductAsync(Product product);
     }
 }
