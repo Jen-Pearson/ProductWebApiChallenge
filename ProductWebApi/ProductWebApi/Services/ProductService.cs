@@ -21,6 +21,17 @@ namespace ProductWebApi.Services
             return await _context.Products.ToListAsync();
         }
 
+        public async Task<IEnumerable<Product>> GetProductsAsync(string model, string description, string brand)
+        {
+            var filteredProducts = from p in _context.Products
+                                   where (string.IsNullOrEmpty(model) || p.Model.Contains(model)) &&
+                                   (string.IsNullOrEmpty(description) || p.Description.Contains(description)) &&
+                                   (string.IsNullOrEmpty(brand) || p.Brand.Contains(brand))
+                                   select p;
+
+            return await filteredProducts.ToListAsync();
+        }
+
         public async Task<Product> GetProductAsync(string id)
         {
             return await _context.Products.FindAsync(id);

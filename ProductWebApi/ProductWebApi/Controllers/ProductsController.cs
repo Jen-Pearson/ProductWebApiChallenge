@@ -22,9 +22,9 @@ namespace ProductWebApi.Controllers
 
         // GET: Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts([FromQuery]string model, [FromQuery] string brand, [FromQuery] string description)
         {
-            var products = await _service.GetProductsAsync();
+            var products = await _service.GetProductsAsync(model, description, brand);
             return new OkObjectResult(products);
         }
 

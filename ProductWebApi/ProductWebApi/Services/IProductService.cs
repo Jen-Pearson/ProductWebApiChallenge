@@ -9,7 +9,7 @@ namespace ProductWebApi.Services
         Task<Product> CreateProductAsync(Product product);
         Task<Product> DeleteProductAsync(string id);
         Task<Product> GetProductAsync(string id);
-        Task<IEnumerable<Product>> GetProductsAsync();
+        Task<IEnumerable<Product>> GetProductsAsync(string model, string description, string brand);
         Task UpdateProductAsync(Product product);
     }
 }
