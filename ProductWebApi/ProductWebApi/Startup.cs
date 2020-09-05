@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProductWebApi.Models;
+using ProductWebApi.Services;
 
 namespace ProductWebApi
 {
@@ -22,7 +23,7 @@ namespace ProductWebApi
         {
             services.AddDbContext<ProductContext>(opt => opt.UseInMemoryDatabase("ProductList"));
             services.AddControllers();
-
+            services.AddScoped<IProductService,ProductService>();
             services.AddSwaggerGen();
         }
 

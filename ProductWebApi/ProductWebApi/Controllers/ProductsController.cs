@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProductWebApi.Exceptions;
 using ProductWebApi.Models;
+using ProductWebApi.Services;
 
 namespace ProductWebApi.Controllers
 {
@@ -13,25 +13,26 @@ namespace ProductWebApi.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly ProductContext _context;
+        private readonly IProductService _service;
 
-        public ProductsController(ProductContext context)
+        public ProductsController(IProductService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            return await _context.Products.ToListAsync();
+            var products = await _service.GetProductsAsync();
+            return new OkObjectResult(products);
         }
 
         // GET: Products/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(string id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _service.GetProductAsync(id);
 
             if (product == null)
             {
@@ -52,22 +53,17 @@ namespace ProductWebApi.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(product).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _service.UpdateProductAsync(id, product);
+            }
+            catch (DataNotFoundException)
+            {
+                return NotFound();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProductExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return NoContent();
@@ -79,21 +75,17 @@ namespace ProductWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
-            _context.Products.Add(product);
             try
             {
-                await _context.SaveChangesAsync();
+                product = await _service.CreateProductAsync(product);
+            }
+            catch (DataConflictException)
+            {
+                return Conflict();
             }
             catch (DbUpdateException)
             {
-                if (ProductExists(product.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return CreatedAtAction("GetProduct", new { id = product.Id }, product);
@@ -103,21 +95,17 @@ namespace ProductWebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Product>> DeleteProduct(string id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _service.GetProductAsync(id);
+
             if (product == null)
             {
                 return NotFound();
             }
 
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-
+            await _service.DeleteProductAsync(id);
             return product;
         }
 
-        private bool ProductExists(string id)
-        {
-            return _context.Products.Any(e => e.Id == id);
-        }
+
     }
 }
