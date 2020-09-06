@@ -21,6 +21,15 @@ namespace ProductWebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder => {
+                    builder.WithOrigins("http://localhost:3000");
+                    builder.AllowAnyMethod();
+                    builder.AllowAnyHeader();
+                    builder.AllowCredentials();
+                });
+            });
             services.AddDbContext<ProductContext>(opt => opt.UseInMemoryDatabase("ProductList"));
             services.AddControllers();
             services.AddScoped<IProductService,ProductService>();
@@ -49,6 +58,8 @@ namespace ProductWebApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthorization();
 
