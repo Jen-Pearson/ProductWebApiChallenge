@@ -19,7 +19,7 @@ class ProductDetails extends React.Component {
 
     async loadEvent(id) {
         try {
-            const response = await fetch('https://localhost:44323/products/' + id);
+            const response = await fetch(Constants.baseAPIUrl + '/' + id);
             const data = await response.json();
             this.setState({ product: data, loading: false });
             // this would be replaced on by onchange associated to input fields
